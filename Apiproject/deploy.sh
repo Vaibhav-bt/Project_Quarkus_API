@@ -17,7 +17,7 @@ podman build -f src/main/docker/Dockerfile.jvm -t $IMAGE_NAME .
 
 # Create Pod
 echo "Creating pod: $POD_NAME..."
-podman pod create --name $POD_NAME -p 80:80 -p 8080:8080 -p 8081:8081 -p 8082:8082
+podman pod create --name $POD_NAME -p 8088:80 -p 8080:8080 -p 8081:8081 -p 8082:8082
 
 # Run MySQL container
 echo "Starting MySQL container..."
@@ -26,7 +26,7 @@ podman run -d --pod $POD_NAME --name $MYSQL_CONTAINER \
   -e MYSQL_DATABASE=$MYSQL_DATABASE \
   -e MYSQL_USER=$MYSQL_USER \
   -e MYSQL_PASSWORD=$MYSQL_PASSWORD \
-  mysql:latest
+  docker.io/mysql:latest
 
 # Run Quarkus API instances
 for i in {0..2}; do
@@ -45,7 +45,7 @@ done
 echo "Starting Nginx container..."
 podman run -d --pod $POD_NAME --name $NGINX_CONTAINER \
   -v $(pwd)/$NGINX_CONF:/etc/nginx/nginx.conf:ro \
-  nginx:latest
+docker.io/nginx:latest
 
 echo "Deployment complete!"
 
