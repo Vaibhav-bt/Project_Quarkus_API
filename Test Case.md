@@ -12,7 +12,7 @@ Vipin Tripathi
 1
 
 ### Reviewer Name
-Anjali Manocha
+Pooja Joshi
 
 ---
 
