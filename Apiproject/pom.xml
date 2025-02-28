@@ -28,52 +28,42 @@
     </dependencies>
   </dependencyManagement>
   <dependencies>
-    <!-- Dependency Injection -->
+
     <dependency>
         <groupId>io.quarkus</groupId>
         <artifactId>quarkus-arc</artifactId>
     </dependency>
 
-    <!-- RESTEasy for building REST APIs -->
+
     <dependency>
         <groupId>io.quarkus</groupId>
         <artifactId>quarkus-resteasy</artifactId>
     </dependency>
 
-    <!-- RESTEasy JSON-B for JSON serialization/deserialization -->
-    <dependency>
+ <dependency>
         <groupId>io.quarkus</groupId>
         <artifactId>quarkus-resteasy-jsonb</artifactId>
     </dependency>
-
-    <!-- Hibernate ORM with Panache -->
     <dependency>
         <groupId>io.quarkus</groupId>
         <artifactId>quarkus-hibernate-orm-panache</artifactId>
     </dependency>
 
-    <!-- MySQL JDBC Driver -->
+
     <dependency>
         <groupId>io.quarkus</groupId>
         <artifactId>quarkus-jdbc-mysql</artifactId>
     </dependency>
-
-    <!-- SmallRye OpenAPI for API documentation -->
-    <dependency>
-        <groupId>io.quarkus</groupId>
-        <artifactId>quarkus-smallrye-openapi</artifactId>
-    </dependency>
     
 
-    <!-- JUnit 5 for unit testing -->
+
     <dependency>
         <groupId>io.quarkus</groupId>
         <artifactId>quarkus-junit5</artifactId>
         <scope>test</scope>
     </dependency>
 
-    <!-- Rest-Assured for API testing -->
-    <dependency>
+        <dependency>
         <groupId>io.rest-assured</groupId>
         <artifactId>rest-assured</artifactId>
         <scope>test</scope>

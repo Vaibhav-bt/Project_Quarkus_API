@@ -1,51 +1,39 @@
 #!/bin/bash
 
-# Set variables
-IMAGE_NAME="crud-api:latest"
-POD_NAME="mypod"
-MYSQL_CONTAINER="mydb"
-MYSQL_ROOT_PASSWORD="1234"
-MYSQL_DATABASE="testdb"
-MYSQL_USER="vaibhav"
-MYSQL_PASSWORD="1234"
-NGINX_CONTAINER="nginx"
-NGINX_CONF="nginx.conf"
+# Set network name and image name
+NETWORK="mynetwork"
+IMAGE="crud-api:latest"
 
-# Build Quarkus API image
-echo "Building Quarkus API image..."
-podman build -f src/main/docker/Dockerfile.jvm -t $IMAGE_NAME .
+# Build Quarkus image
+podman build -t $IMAGE .
 
-# Create Pod
-echo "Creating pod: $POD_NAME..."
-podman pod create --name $POD_NAME -p 8088:80 -p 8080:8080 -p 8081:8081 -p 8082:8082
+# Create network (if not exists)
+podman network create $NETWORK || true
 
 # Run MySQL container
-echo "Starting MySQL container..."
-podman run -d --pod $POD_NAME --name $MYSQL_CONTAINER \
-  -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD \
-  -e MYSQL_DATABASE=$MYSQL_DATABASE \
-  -e MYSQL_USER=$MYSQL_USER \
-  -e MYSQL_PASSWORD=$MYSQL_PASSWORD \
-  docker.io/mysql:latest
+podman run -d \
+    --name mydb \
+    --network $NETWORK \
+    -e MYSQL_ROOT_PASSWORD=1234 \
+    -e MYSQL_DATABASE=testdb \
+    -e MYSQL_USER=vaibhav \
+    -e MYSQL_PASSWORD=1234 \
+    -v mydb_data:/var/lib/mysql \
+    docker.io/mysql:latest
 
-# Run Quarkus API instances
-for i in {0..2}; do
-  PORT=$((8080 + i))
-  CONTAINER_NAME="quarkus-api$((i+1))"
-  echo "Starting Quarkus API container: $CONTAINER_NAME on port $PORT..."
-  podman run -d --pod $POD_NAME --name $CONTAINER_NAME \
-    -e QUARKUS_HTTP_PORT=$PORT \
-    -e QUARKUS_DATASOURCE_URL="jdbc:mysql://localhost:3306/$MYSQL_DATABASE" \
-    -e QUARKUS_DATASOURCE_USERNAME=$MYSQL_USER \
-    -e QUARKUS_DATASOURCE_PASSWORD=$MYSQL_PASSWORD \
-    $IMAGE_NAME
-done
+
+# Run 3 API containers
+podman run -d --name api1 --network $NETWORK -p 8081:8081 -e QUARKUS_HTTP_PORT=8081 -e QUARKUS_DATASOURCE_JDBC_URL=jdbc:mysql://mydb:3306/testdb $IMAGE
+podman run -d --name api2 --network $NETWORK -p 8082:8082 -e QUARKUS_HTTP_PORT=8082 -e QUARKUS_DATASOURCE_JDBC_URL=jdbc:mysql://mydb:3306/testdb $IMAGE
+podman run -d --name api3 --network $NETWORK -p 8083:8083 -e QUARKUS_HTTP_PORT=8083 -e QUARKUS_DATASOURCE_JDBC_URL=jdbc:mysql://mydb:3306/testdb $IMAGE
 
 # Run Nginx container
-echo "Starting Nginx container..."
-podman run -d --pod $POD_NAME --name $NGINX_CONTAINER \
-  -v $(pwd)/$NGINX_CONF:/etc/nginx/nginx.conf:ro \
-docker.io/nginx:latest
+podman run -d \
+    --name nginx \
+    --network $NETWORK \
+    -p 8088:80 \
+    -v $(pwd)/nginx.conf:/etc/nginx/nginx.conf:ro \
+    docker.io/nginx:latest
 
-echo "Deployment complete!"
 
+echo "All containers are running!"

@@ -96,23 +96,23 @@
 #ENTRYPOINT [ "/opt/jboss/container/java/run/run-java.sh" ]
 
 
-FROM registry.access.redhat.com/ubi8/openjdk-17:1.17
+#FROM registry.access.redhat.com/ubi8/openjdk-17:1.17
 
-ENV LANGUAGE='en_US:en'
+#ENV LANGUAGE='en_US:en'
 
 # Copy application files with proper ownership
-COPY --chown=185 target/quarkus-app/lib/ /deployments/lib/
-COPY --chown=185 target/quarkus-app/*.jar /deployments/
-COPY --chown=185 target/quarkus-app/app/ /deployments/app/
-COPY --chown=185 target/quarkus-app/quarkus/ /deployments/quarkus/
+#COPY --chown=185 target/quarkus-app/lib/ /deployments/lib/
+#COPY --chown=185 target/quarkus-app/*.jar /deployments/
+#COPY --chown=185 target/quarkus-app/app/ /deployments/app/
+#COPY --chown=185 target/quarkus-app/quarkus/ /deployments/quarkus/
 
 # Expose Quarkus default port
-EXPOSE 8080
+#EXPOSE 8080
 
 # Set environment variables for Quarkus
-ENV JAVA_OPTS_APPEND="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
-ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
+#ENV JAVA_OPTS_APPEND="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
+#ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
 
 # Run the application
-USER 185
-ENTRYPOINT [ "/opt/jboss/container/java/run/run-java.sh" ]
+#USER 185
+#ENTRYPOINT [ "/opt/jboss/container/java/run/run-java.sh" ]
